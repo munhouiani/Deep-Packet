@@ -13,7 +13,7 @@ docker run -it \
 mhwong2007/deep_packet \
 bash
 ```
-* If you want to run Jupyter notebook, use the folowwing command:
+* If you want to run Jupyter notebook, use the following command:
 ```bash
 docker run -it \
 -v /path/to/the/code:/data \
