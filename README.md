@@ -5,7 +5,7 @@ Details in blog post: https://blog.munhou.com/2020/04/06/Pytorch-Implementation-
 ## How to Use
 
 * Clone the project
-* Download the train and test set I created at [here](https://drive.google.com/file/d/1ID-iFRnEOahH4zsDU7PmdAv4_833lLZo/view?usp=sharing), or download the [full dataset](https://www.unb.ca/cic/datasets/vpn.html) if you want to process the data from scratch.
+* Download the train and test set I created at [here](https://drive.google.com/file/d/1_O2LPs3RixaErigJ_WL1Ecq83VXCXptq/view?usp=sharing), or download the [full dataset](https://www.unb.ca/cic/datasets/vpn.html) if you want to process the data from scratch.
 * Run python codes with the docker image:
 ```bash
 docker run -it \
