@@ -58,4 +58,4 @@ python train_cnn.py -d train_test_data/traffic_classification/train.parquet -m m
 
 ## Model Files
 
-Download the pre-trained models [here](https://drive.google.com/file/d/1f0zjzuerhbWmXrgob7uDGQt-fdZrJ50V/view?usp=sharing).
+Download the pre-trained models [here](https://drive.google.com/file/d/1UgSqcN5SG5hqC2imlYu6bB2f9jD1iiu8/view?usp=sharing).
