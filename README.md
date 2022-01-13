@@ -1,27 +1,36 @@
 # Deep Packet
 
-Details in blog post: https://blog.munhou.com/2020/04/06/Pytorch-Implementation-of-Deep-Packet-A-Novel-Approach-For-Encrypted-Tra%EF%AC%83c-Classi%EF%AC%81cation-Using-Deep-Learning/
+Details in blog
+post: https://blog.munhou.com/2020/04/05/Pytorch-Implementation-of-Deep-Packet-A-Novel-Approach-For-Encrypted-Tra%EF%AC%83c-Classi%EF%AC%81cation-Using-Deep-Learning/
+
+## EDIT: 2022-01-17
+
+* Update code and model
+* Drop `petastorm`, use huggingface's `datasets` instead for data loader
 
 ## How to Use
 
 * Clone the project
-* Download the train and test set I created at [here](https://drive.google.com/file/d/1_O2LPs3RixaErigJ_WL1Ecq83VXCXptq/view?usp=sharing), or download the [full dataset](https://www.unb.ca/cic/datasets/vpn.html) if you want to process the data from scratch.
-* Run python codes with the docker image:
-```bash
-docker run -it \
--v /path/to/the/code:/data \
-mhwong2007/deep_packet \
-bash
-```
-* If you want to run Jupyter notebook, use the following command:
-```bash
-docker run -it \
--v /path/to/the/code:/data \
--p 8888:8888 \
-mhwong2007/deep_packet \
-jupyter lab --no-browser --ip=0.0.0.0 --port=8888 --NotebookApp.token='' --allow-root
-```
-* If you want to build the environment yourself, please install the dependencies and libraries in the [Dockerfile](Dockerfile)
+* Create environment via conda
+    * For Mac
+      ```bash
+      conda env create -f env_mac.yaml
+      ```
+    * For Linux (CPU only)
+      ```bash
+      conda env create -f env_linux_cpu.yaml
+      ```
+    * For Linux (CUDA 10.2)
+      ```bash
+      conda env create -f env_linux_cuda102.yaml
+      ```
+    * For Linux (CUDA 11.3)
+      ```bash
+      conda env create -f env_linux_cuda113.yaml
+      ```
+* Download the train and test set I created
+  at [here](https://drive.google.com/file/d/1_O2LPs3RixaErigJ_WL1Ecq83VXCXptq/view?usp=sharing), or download
+  the [full dataset](https://www.unb.ca/cic/datasets/vpn.html) if you want to process the data from scratch.
 
 ## Data Pre-processing
 
@@ -50,12 +59,50 @@ python train_cnn.py -d train_test_data/traffic_classification/train.parquet -m m
 ```
 
 ## Evaluation Result
+
 ### Application Classification
+
 ![](https://blog.munhou.com/images/deep-packet/cnn_app_classification.png)
 
 ### Traffic Classification
+
 ![](https://blog.munhou.com/images/deep-packet/cnn_traffic_classification.png)
 
 ## Model Files
 
-Download the pre-trained models [here](https://drive.google.com/file/d/1UgSqcN5SG5hqC2imlYu6bB2f9jD1iiu8/view?usp=sharing).
+Download the pre-trained
+models [here](https://drive.google.com/file/d/1UgSqcN5SG5hqC2imlYu6bB2f9jD1iiu8/view?usp=sharing).
+
+## Elapsed Time
+
+### Preprocessing
+
+Code ran on AWS `c5.2xlarge`
+
+```
+1:48:59 elapsed
+```
+
+### Train and Test Creation
+
+Code ran on AWS `c5.2xlarge`
+
+```
+1:26:27 elapsed
+```
+
+### Traffic Classification Model Training
+
+Code ran on AWS `g5.xlarge`
+
+```
+22:49 elapsed
+```
+
+### Application Classification Model Training
+
+Code ran on AWS `g5.xlarge`
+
+```
+7:41 elapsed
+```

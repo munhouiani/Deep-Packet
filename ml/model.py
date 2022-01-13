@@ -1,19 +1,21 @@
-from pathlib import Path
+import multiprocessing
 
+import datasets
 import torch
-from petastorm import make_reader
-from petastorm.pytorch import DataLoader
 from pytorch_lightning import LightningModule
 from torch import nn as nn
 from torch.nn import functional as F
+from torch.utils.data import DataLoader
+
+from ml.dataset import dataset_collate_function
 
 
 class CNN(LightningModule):
-    def __init__(self, hparams):
+    def __init__(self, c1_output_dim, c1_kernel_size, c1_stride, c2_output_dim, c2_kernel_size, c2_stride,
+                 output_dim, data_path, signal_length):
         super().__init__()
-        # config
-        self.hparams = hparams
-        self.data_path = self.hparams.data_path
+        # save parameters to checkpoint
+        self.save_hyperparameters()
 
         # two convolution, then one max pool
         self.conv1 = nn.Sequential(
@@ -103,10 +105,15 @@ class CNN(LightningModule):
         return x
 
     def train_dataloader(self):
-        reader = make_reader(Path(self.data_path).absolute().as_uri(), reader_pool_type='process', workers_count=12,
-                             pyarrow_serialize=True, shuffle_row_groups=True, shuffle_row_drop_partitions=2,
-                             num_epochs=self.hparams.epoch)
-        dataloader = DataLoader(reader, batch_size=16, shuffling_queue_capacity=4096)
+        # expect to get train folder
+        dataset_dict = datasets.load_dataset(self.hparams.data_path)
+        dataset = dataset_dict[list(dataset_dict.keys())[0]]
+        try:
+            num_workers = multiprocessing.cpu_count()
+        except:
+            num_workers = 1
+        dataloader = DataLoader(dataset, batch_size=16, num_workers=num_workers, collate_fn=dataset_collate_function,
+                                shuffle=True)
 
         return dataloader
 
@@ -118,8 +125,8 @@ class CNN(LightningModule):
         y = batch['label'].long()
         y_hat = self(x)
 
-        loss = {'loss': F.cross_entropy(y_hat, y)}
+        entropy = F.cross_entropy(y_hat, y)
+        self.log('training_loss', entropy, prog_bar=True, logger=True, on_step=True, on_epoch=True)
+        loss = {'loss': entropy}
 
-        if (batch_idx % 50) == 0:
-            self.logger.log_metrics(loss, step=batch_idx)
         return loss
