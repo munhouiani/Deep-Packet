@@ -1,8 +1,9 @@
 from pathlib import Path
+
 from scapy.layers.dns import DNS
 from scapy.layers.inet import TCP
 from scapy.packet import Padding
-from scapy.utils import rdpcap
+from scapy.utils import PcapReader
 
 # for app identification
 PREFIX_TO_APP_ID = {
@@ -295,7 +296,7 @@ ID_TO_TRAFFIC = {
 
 
 def read_pcap(path: Path):
-    packets = rdpcap(str(path))
+    packets = PcapReader(str(path))
 
     return packets
 

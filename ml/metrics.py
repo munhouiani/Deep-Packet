@@ -1,11 +1,14 @@
+import multiprocessing
 from pathlib import Path
 
+import datasets
 import numpy as np
 import torch
 import pandas as pd
-from petastorm import make_reader
-from petastorm.pytorch import DataLoader
 from torch.nn import functional as F
+from torch.utils.data import DataLoader
+
+from ml.dataset import dataset_collate_function
 
 
 def confusion_matrix(data_path, model, num_class):
@@ -14,10 +17,15 @@ def confusion_matrix(data_path, model, num_class):
 
     cm = np.zeros((num_class, num_class), dtype=np.float)
 
-    dataloader = DataLoader(make_reader(str(data_path.absolute().as_uri()), reader_pool_type='process', num_epochs=1),
-                            batch_size=4096)
+    dataset_dict = datasets.load_dataset(str(data_path.absolute()))
+    dataset = dataset_dict[list(dataset_dict.keys())[0]]
+    try:
+        num_workers = multiprocessing.cpu_count()
+    except:
+        num_workers = 1
+    dataloader = DataLoader(dataset, batch_size=4096, num_workers=num_workers, collate_fn=dataset_collate_function)
     for batch in dataloader:
-        x = batch['feature'].float()
+        x = batch['feature'].float().to(model.device)
         y = batch['label'].long()
         y_hat = torch.argmax(F.log_softmax(model(x), dim=1), dim=1)
 
