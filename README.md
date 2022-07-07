@@ -75,7 +75,7 @@ python train_cnn.py -d train_test_data/traffic_classification/train.parquet -m m
 ## Model Files
 
 Download the pre-trained
-models [here](https://drive.google.com/file/d/1UgSqcN5SG5hqC2imlYu6bB2f9jD1iiu8/view?usp=sharing).
+models [here](https://drive.google.com/file/d/1LFrx2us11cNqIDm_yWcfMES5ypvAgpmC/view?usp=sharing).
 
 ## Elapsed Time
 
