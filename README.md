@@ -33,7 +33,7 @@ post: https://blog.munhou.com/2020/04/05/Pytorch-Implementation-of-Deep-Packet-A
       conda env create -f env_linux_cuda113.yaml
       ```
 * Download the train and test set I created
-  at [here](https://drive.google.com/file/d/1_O2LPs3RixaErigJ_WL1Ecq83VXCXptq/view?usp=sharing), or download
+  at [here](https://drive.google.com/file/d/1EF2MYyxMOWppCUXlte8lopkytMyiuQu_/view?usp=sharing), or download
   the [full dataset](https://www.unb.ca/cic/datasets/vpn.html) if you want to process the data from scratch.
 
 ## Data Pre-processing
