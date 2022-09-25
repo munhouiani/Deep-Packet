@@ -3,6 +3,13 @@
 Details in blog
 post: https://blog.munhou.com/2020/04/05/Pytorch-Implementation-of-Deep-Packet-A-Novel-Approach-For-Encrypted-Tra%EF%AC%83c-Classi%EF%AC%81cation-Using-Deep-Learning/
 
+## EDIT: 2022-09-27
+
+* Update dataset and model
+* Update dependencies
+* Add more data to `chat`, `file_transfer`, `voip`, `streaming` and `vpn_voip`
+* Remove tor and torrent related data as they are no longer available
+
 ## EDIT: 2022-01-18
 
 * Update dataset and model
@@ -81,18 +88,18 @@ models [here](https://drive.google.com/file/d/1LFrx2us11cNqIDm_yWcfMES5ypvAgpmC/
 
 ### Preprocessing
 
-Code ran on AWS `c5.2xlarge`
+Code ran on AWS `c5.4xlarge`
 
 ```
-1:48:59 elapsed
+7:01:32 elapsed
 ```
 
 ### Train and Test Creation
 
-Code ran on AWS `c5.2xlarge`
+Code ran on AWS `c5.4xlarge`
 
 ```
-1:26:27 elapsed
+2:55:46 elapsed
 ```
 
 ### Traffic Classification Model Training
@@ -100,7 +107,7 @@ Code ran on AWS `c5.2xlarge`
 Code ran on AWS `g5.xlarge`
 
 ```
-22:49 elapsed
+24:41 elapsed
 ```
 
 ### Application Classification Model Training
@@ -108,5 +115,5 @@ Code ran on AWS `g5.xlarge`
 Code ran on AWS `g5.xlarge`
 
 ```
-7:41 elapsed
+7:55 elapsed
 ```

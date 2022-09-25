@@ -3,6 +3,8 @@ from pathlib import Path
 import click
 import numpy as np
 import pandas as pd
+import gzip
+import json
 from joblib import Parallel, delayed
 from scapy.compat import raw
 from scapy.layers.inet import IP, UDP
@@ -94,17 +96,19 @@ def transform_pcap(path, output_path: Path = None, output_batch_size=10000):
 
         # write every batch_size packets, by default 10000
         if rows and i > 0 and i % output_batch_size == 0:
-            part_output_path = Path(str(output_path.absolute()) + f'_part_{batch_index:04d}.parquet')
-            df = pd.DataFrame(rows)
-            df.to_parquet(part_output_path)
+            part_output_path = Path(str(output_path.absolute()) + f'_part_{batch_index:04d}.json.gz')
+            with part_output_path.open('wb') as f, gzip.open(f, 'wt') as f_out:
+                for row in rows:
+                    f_out.write(f'{json.dumps(row)}\n')
             batch_index += 1
             rows.clear()
 
     # final write
     if rows:
-        df = pd.DataFrame(rows)
-        part_output_path = Path(str(output_path.absolute()) + f'_part_{batch_index:04d}.parquet')
-        df.to_parquet(part_output_path)
+        part_output_path = Path(str(output_path.absolute()) + f'_part_{batch_index:04d}.json.gz')
+        with part_output_path.open('wb') as f, gzip.open(f, 'wt') as f_out:
+            for row in rows:
+                f_out.write(f'{json.dumps(row)}\n')
 
     # write success file
     with Path(str(output_path.absolute()) + '_SUCCESS').open('w') as f:

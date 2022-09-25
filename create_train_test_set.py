@@ -6,6 +6,7 @@ import click
 import psutil
 from pyspark.sql import SparkSession, Window
 from pyspark.sql.functions import col, monotonically_increasing_id, lit, row_number, rand
+from pyspark.sql.types import StructType, StructField, ArrayType, LongType, DoubleType
 
 
 def top_n_per_group(spark_df, groupby, topn):
@@ -143,7 +144,13 @@ def main(source, target, test_size, under_sampling):
     )
 
     # read data
-    df = spark.read.parquet(f'{source_data_dir_path.absolute().as_uri()}/*.parquet')
+    schema = StructType([
+        StructField('app_label', LongType(), True),
+        StructField('traffic_label', LongType(), True),
+        StructField('feature', ArrayType(DoubleType()), True),
+    ])
+
+    df = spark.read.schema(schema).json(f'{source_data_dir_path.absolute().as_uri()}/*.json.gz')
 
     # prepare data for application classification and traffic classification
     print('processing application classification dataset')
