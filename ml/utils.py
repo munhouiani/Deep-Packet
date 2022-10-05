@@ -42,13 +42,13 @@ def train_cnn(c1_kernel_size, c1_output_dim, c1_stride, c2_kernel_size, c2_outpu
 def train_application_classification_cnn_model(data_path, model_path):
     logger = TensorBoardLogger('application_classification_cnn_logs', 'application_classification_cnn')
     train_cnn(c1_kernel_size=4, c1_output_dim=200, c1_stride=3, c2_kernel_size=5, c2_output_dim=200, c2_stride=1,
-              output_dim=17, data_path=data_path, epoch=20, model_path=model_path, signal_length=1500, logger=logger)
+              output_dim=15, data_path=data_path, epoch=20, model_path=model_path, signal_length=1500, logger=logger)
 
 
 def train_traffic_classification_cnn_model(data_path, model_path):
     logger = TensorBoardLogger('traffic_classification_cnn_logs', 'traffic_classification_cnn')
     train_cnn(c1_kernel_size=5, c1_output_dim=200, c1_stride=3, c2_kernel_size=4, c2_output_dim=200, c2_stride=3,
-              output_dim=12, data_path=data_path, epoch=20, model_path=model_path, signal_length=1500, logger=logger)
+              output_dim=11, data_path=data_path, epoch=20, model_path=model_path, signal_length=1500, logger=logger)
 
 
 def load_cnn_model(model_path, gpu):
