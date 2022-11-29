@@ -409,8 +409,8 @@ class ResNet1d(nn.Module):
 
 
 class ResNet(LightningModule):
-    def __init__(self, c1_output_dim, c1_kernel_size, c1_stride, c2_output_dim, c2_kernel_size, c2_stride,
-                 output_dim, data_path, signal_length):
+    def __init__(self, c1_output_dim, c1_kernel_size, c1_stride, c1_groups, c1_n_block, c2_output_dim, c2_kernel_size, c2_stride,
+                 c2_groups, c2_n_block, output_dim, data_path, signal_length):
         super().__init__()
         # save parameters to checkpoint
         self.save_hyperparameters()
@@ -422,9 +422,9 @@ class ResNet(LightningModule):
                 base_filters=self.hparams.c1_output_dim,
                 kernel_size=self.hparams.c1_kernel_size,
                 stride=self.hparams.c1_stride,
-                groups=1,
-                n_block=48,
-                n_classes=self.hparams.output_dim
+                groups=self.hparams.c1_groups,
+                n_block=self.hparams.c1_n_block,
+                n_classes=self.hparams.c1_output_dim
             ),
             nn.ReLU()
         )
@@ -434,9 +434,9 @@ class ResNet(LightningModule):
                 base_filters=self.hparams.c2_output_dim,
                 kernel_size=self.hparams.c2_kernel_size,
                 stride=self.hparams.c2_stride,
-                groups=2,
-                n_block=48,
-                n_classes=self.hparams.output_dim
+                groups=self.hparams.c2_groups,
+                n_block=self.hparams.c2_n_block,
+                n_classes=self.hparams.c2_output_dim
             ),
             nn.ReLU()
         )
