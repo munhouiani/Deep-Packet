@@ -409,8 +409,7 @@ class ResNet1d(nn.Module):
 
 
 class ResNet(LightningModule):
-    def __init__(self, c1_output_dim, c1_kernel_size, c1_stride, c1_groups, c1_n_block, c2_output_dim, c2_kernel_size, c2_stride,
-                 c2_groups, c2_n_block, output_dim, data_path, signal_length):
+    def __init__(self, c1_output_dim, c1_kernel_size, c1_stride, c1_groups, c1_n_block, output_dim, data_path, signal_length):
         super().__init__()
         # save parameters to checkpoint
         self.save_hyperparameters()
@@ -428,18 +427,6 @@ class ResNet(LightningModule):
             ),
             nn.ReLU()
         )
-        self.conv2 = nn.Sequential(
-            ResNet1d(
-                in_channels=self.hparams.c1_output_dim,
-                base_filters=self.hparams.c2_output_dim,
-                kernel_size=self.hparams.c2_kernel_size,
-                stride=self.hparams.c2_stride,
-                groups=self.hparams.c2_groups,
-                n_block=self.hparams.c2_n_block,
-                n_classes=self.hparams.c2_output_dim
-            ),
-            nn.ReLU()
-        )
 
         self.max_pool = nn.MaxPool1d(
             kernel_size=2
@@ -449,7 +436,6 @@ class ResNet(LightningModule):
         # use a dummy input to calculate
         dummy_x = torch.rand(1, 1, self.hparams.signal_length, requires_grad=False)
         dummy_x = self.conv1(dummy_x)
-        dummy_x = self.conv2(dummy_x)
         dummy_x = self.max_pool(dummy_x)
         max_pool_out = dummy_x.view(1, -1).shape[1]
 
