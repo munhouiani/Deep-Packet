@@ -477,9 +477,8 @@ class ResNet(LightningModule):
         # signal_length is 1500 by default
         batch_size = x.shape[0]
 
-        # 2 conv 1 max
+        # 1 conv 1 max
         x = self.conv1(x)
-        x = self.conv2(x)
         x = self.max_pool(x)
 
         x = x.reshape(batch_size, -1)
