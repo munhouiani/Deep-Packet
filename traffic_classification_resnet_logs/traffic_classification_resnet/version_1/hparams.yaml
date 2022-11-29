@@ -1,0 +1,8 @@
+c1_groups: 1
+c1_kernel_size: 5
+c1_n_block: 4
+c1_output_dim: 16
+c1_stride: 3
+data_path: train_test_data/traffic_classification/train.parquet
+output_dim: 12
+signal_length: 1500
