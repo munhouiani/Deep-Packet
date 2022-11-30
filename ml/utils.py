@@ -75,7 +75,7 @@ def train_application_classification_cnn_model(data_path, model_path):
 
 def train_application_classification_resnet_model(data_path, model_path):
     logger = TensorBoardLogger('application_classification_resnet_logs', 'application_classification_resnet')
-    train_resnet(c1_kernel_size=4, c1_output_dim=16, c1_stride=3, c1_groups=1, c1_n_block=4, output_dim=17, data_path=data_path, epoch=20, model_path=model_path, signal_length=1500, logger=logger)
+    train_resnet(c1_kernel_size=4, c1_output_dim=16, c1_stride=3, c1_groups=1, c1_n_block=4, output_dim=17, data_path=data_path, epoch=40, model_path=model_path, signal_length=1500, logger=logger)
 
 
 def train_traffic_classification_cnn_model(data_path, model_path):
@@ -86,7 +86,7 @@ def train_traffic_classification_cnn_model(data_path, model_path):
 
 def train_traffic_classification_resnet_model(data_path, model_path):
     logger = TensorBoardLogger('traffic_classification_resnet_logs', 'traffic_classification_resnet')
-    train_resnet(c1_kernel_size=5, c1_output_dim=16, c1_stride=3, c1_groups=1, c1_n_block=4, output_dim=12, data_path=data_path, epoch=20, model_path=model_path, signal_length=1500, logger=logger)
+    train_resnet(c1_kernel_size=5, c1_output_dim=16, c1_stride=3, c1_groups=1, c1_n_block=4, output_dim=12, data_path=data_path, epoch=40, model_path=model_path, signal_length=1500, logger=logger)
 
 
 def load_cnn_model(model_path, gpu):
