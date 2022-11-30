@@ -124,11 +124,11 @@ def load_application_classification_resnet_model(model_path, gpu=False):
 
 
 def load_traffic_classification_cnn_model(model_path, gpu=False):
-    return load_resnet_model(model_path=model_path, gpu=gpu)
+    return load_cnn_model(model_path=model_path, gpu=gpu)
 
 
 def load_traffic_classification_resnet_model(model_path, gpu=False):
-    return load_cnn_model(model_path=model_path, gpu=gpu)
+    return load_resnet_model(model_path=model_path, gpu=gpu)
 
 
 def normalise_cm(cm):
