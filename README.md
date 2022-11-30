@@ -3,6 +3,10 @@
 Details in blog
 post: https://blog.munhou.com/2020/04/05/Pytorch-Implementation-of-Deep-Packet-A-Novel-Approach-For-Encrypted-Tra%EF%AC%83c-Classi%EF%AC%81cation-Using-Deep-Learning/
 
+## EDIT: 2022-11-30
+
+* Add the ResNet model
+
 ## EDIT: 2022-09-27
 
 * Update dataset and model
