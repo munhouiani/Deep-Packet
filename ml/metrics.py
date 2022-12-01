@@ -23,10 +23,15 @@ def confusion_matrix(data_path, model, num_class):
         num_workers = multiprocessing.cpu_count()
     except:
         num_workers = 1
-    dataloader = DataLoader(dataset, batch_size=4096, num_workers=num_workers, collate_fn=dataset_collate_function)
+    dataloader = DataLoader(
+        dataset,
+        batch_size=4096,
+        num_workers=num_workers,
+        collate_fn=dataset_collate_function,
+    )
     for batch in dataloader:
-        x = batch['feature'].float().to(model.device)
-        y = batch['label'].long()
+        x = batch["feature"].float().to(model.device)
+        y = batch["label"].long()
         y_hat = torch.argmax(F.log_softmax(model(x), dim=1), dim=1)
 
         for i in range(len(y)):
@@ -59,11 +64,7 @@ def get_classification_report(cm, labels=None):
         else:
             label = i
 
-        row = {
-            'label': label,
-            'precision': precision,
-            'recall': recall
-        }
+        row = {"label": label, "precision": precision, "recall": recall}
         rows.append(row)
 
     return pd.DataFrame(rows)

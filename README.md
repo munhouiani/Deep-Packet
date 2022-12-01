@@ -3,22 +3,23 @@
 Details in blog
 post: https://blog.munhou.com/2020/04/05/Pytorch-Implementation-of-Deep-Packet-A-Novel-Approach-For-Encrypted-Tra%EF%AC%83c-Classi%EF%AC%81cation-Using-Deep-Learning/
 
-## EDIT: 2022-11-30
+## Changelog
+### EDIT: 2022-11-30
 
-* Add the ResNet model
+* Add the ResNet model. Kudos to [Taehyun](https://github.com/thkim0022) for implementing ResNet. 
 
-## EDIT: 2022-09-27
+### EDIT: 2022-09-27
 
 * Update dataset and model
 * Update dependencies
 * Add more data to `chat`, `file_transfer`, `voip`, `streaming` and `vpn_voip`
 * Remove tor and torrent related data as they are no longer available
 
-## EDIT: 2022-01-18
+### EDIT: 2022-01-18
 
 * Update dataset and model
 
-## EDIT: 2022-01-17
+### EDIT: 2022-01-17
 
 * Update code and model
 * Drop `petastorm`, use huggingface's `datasets` instead for data loader
@@ -63,17 +64,32 @@ python create_train_test_set.py -s processed_data -t train_test_data
 
 Application Classification
 
+For CNN model
+
 ```bash
 python train_cnn.py -d train_test_data/application_classification/train.parquet -m model/application_classification.cnn.model -t app
 ```
 
+For Resnet model
+
+```bash
+python train_resnet.py -d train_test_data/application_classification/train.parquet -m model/application_classification.cnn.model -t app
+```
+
 Traffic Classification
+
+For CNN model
 
 ```bash
 python train_cnn.py -d train_test_data/traffic_classification/train.parquet -m model/traffic_classification.cnn.model -t traffic
 ```
 
-## Evaluation Result
+For Resnet model
+```bash
+python train_resnet.py -d train_test_data/traffic_classification/train.parquet -m model/traffic_classification.cnn.model -t traffic
+```
+
+## Evaluation Result (CNN)
 
 ### Application Classification
 
@@ -85,7 +101,7 @@ python train_cnn.py -d train_test_data/traffic_classification/train.parquet -m m
 
 ## Model Files
 
-Download the pre-trained
+Download the pre-trained CNN
 models [here](https://drive.google.com/file/d/1LFrx2us11cNqIDm_yWcfMES5ypvAgpmC/view?usp=sharing).
 
 ## Elapsed Time
@@ -106,7 +122,7 @@ Code ran on AWS `c5.4xlarge`
 2:55:46 elapsed
 ```
 
-### Traffic Classification Model Training
+### Traffic Classification Model Training (CNN)
 
 Code ran on AWS `g5.xlarge`
 
@@ -114,7 +130,7 @@ Code ran on AWS `g5.xlarge`
 24:41 elapsed
 ```
 
-### Application Classification Model Training
+### Application Classification Model Training (CNN)
 
 Code ran on AWS `g5.xlarge`
 
