@@ -24,8 +24,8 @@ def remove_ether_header(packet):
 
 def mask_ip(packet):
     if IP in packet:
-        packet[IP].src = '0.0.0.0'
-        packet[IP].dst = '0.0.0.0'
+        packet[IP].src = "0.0.0.0"
+        packet[IP].dst = "0.0.0.0"
 
     return packet
 
@@ -37,7 +37,7 @@ def pad_udp(packet):
 
         # build a padding layer
         pad = Padding()
-        pad.load = '\x00' * 12
+        pad.load = "\x00" * 12
 
         layer_before = packet.copy()
         layer_before[UDP].remove_payload()
@@ -49,7 +49,7 @@ def pad_udp(packet):
 
 
 def packet_to_sparse_array(packet, max_length=1500):
-    arr = np.frombuffer(raw(packet), dtype=np.uint8)[0: max_length] / 255
+    arr = np.frombuffer(raw(packet), dtype=np.uint8)[0:max_length] / 255
     if len(arr) < max_length:
         pad_width = max_length - len(arr)
         arr = np.pad(arr, pad_width=(0, pad_width), constant_values=0)
@@ -72,11 +72,11 @@ def transform_packet(packet):
 
 
 def transform_pcap(path, output_path: Path = None, output_batch_size=10000):
-    if Path(str(output_path.absolute()) + '_SUCCESS').exists():
-        print(output_path, 'Done')
+    if Path(str(output_path.absolute()) + "_SUCCESS").exists():
+        print(output_path, "Done")
         return
 
-    print('Processing', path)
+    print("Processing", path)
 
     rows = []
     batch_index = 0
@@ -84,55 +84,74 @@ def transform_pcap(path, output_path: Path = None, output_batch_size=10000):
         arr = transform_packet(packet)
         if arr is not None:
             # get labels for app identification
-            prefix = path.name.split('.')[0].lower()
+            prefix = path.name.split(".")[0].lower()
             app_label = PREFIX_TO_APP_ID.get(prefix)
             traffic_label = PREFIX_TO_TRAFFIC_ID.get(prefix)
             row = {
-                'app_label': app_label,
-                'traffic_label': traffic_label,
-                'feature': arr.todense().tolist()[0]
+                "app_label": app_label,
+                "traffic_label": traffic_label,
+                "feature": arr.todense().tolist()[0],
             }
             rows.append(row)
 
         # write every batch_size packets, by default 10000
         if rows and i > 0 and i % output_batch_size == 0:
-            part_output_path = Path(str(output_path.absolute()) + f'_part_{batch_index:04d}.json.gz')
-            with part_output_path.open('wb') as f, gzip.open(f, 'wt') as f_out:
+            part_output_path = Path(
+                str(output_path.absolute()) + f"_part_{batch_index:04d}.json.gz"
+            )
+            with part_output_path.open("wb") as f, gzip.open(f, "wt") as f_out:
                 for row in rows:
-                    f_out.write(f'{json.dumps(row)}\n')
+                    f_out.write(f"{json.dumps(row)}\n")
             batch_index += 1
             rows.clear()
 
     # final write
     if rows:
-        part_output_path = Path(str(output_path.absolute()) + f'_part_{batch_index:04d}.json.gz')
-        with part_output_path.open('wb') as f, gzip.open(f, 'wt') as f_out:
+        part_output_path = Path(
+            str(output_path.absolute()) + f"_part_{batch_index:04d}.json.gz"
+        )
+        with part_output_path.open("wb") as f, gzip.open(f, "wt") as f_out:
             for row in rows:
-                f_out.write(f'{json.dumps(row)}\n')
+                f_out.write(f"{json.dumps(row)}\n")
 
     # write success file
-    with Path(str(output_path.absolute()) + '_SUCCESS').open('w') as f:
-        f.write('')
+    with Path(str(output_path.absolute()) + "_SUCCESS").open("w") as f:
+        f.write("")
 
-    print(output_path, 'Done')
+    print(output_path, "Done")
 
 
 @click.command()
-@click.option('-s', '--source', help='path to the directory containing raw pcap files', required=True)
-@click.option('-t', '--target', help='path to the directory for persisting preprocessed files', required=True)
-@click.option('-n', '--njob', default=-1, help='num of executors', type=int)
+@click.option(
+    "-s",
+    "--source",
+    help="path to the directory containing raw pcap files",
+    required=True,
+)
+@click.option(
+    "-t",
+    "--target",
+    help="path to the directory for persisting preprocessed files",
+    required=True,
+)
+@click.option("-n", "--njob", default=-1, help="num of executors", type=int)
 def main(source, target, njob):
     data_dir_path = Path(source)
     target_dir_path = Path(target)
     target_dir_path.mkdir(parents=True, exist_ok=True)
     if njob == 1:
         for pcap_path in sorted(data_dir_path.iterdir()):
-            transform_pcap(pcap_path, target_dir_path / (pcap_path.name + '.transformed'))
+            transform_pcap(
+                pcap_path, target_dir_path / (pcap_path.name + ".transformed")
+            )
     else:
         Parallel(n_jobs=njob)(
-            delayed(transform_pcap)(pcap_path, target_dir_path / (pcap_path.name + '.transformed')) for pcap_path in
-            sorted(data_dir_path.iterdir()))
+            delayed(transform_pcap)(
+                pcap_path, target_dir_path / (pcap_path.name + ".transformed")
+            )
+            for pcap_path in sorted(data_dir_path.iterdir())
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
