@@ -20,6 +20,6 @@ dependencies:
       - tensorboard==2.10.0
       - --extra-index-url https://download.pytorch.org/whl/nightly/cpu
       - --pre
-      - torch==1.13.0.dev20220925
-      - torchvision==0.14.0.dev20220925
-      - torchaudio==0.13.0.dev20220925
+      - torch==1.13.0.dev20221001
+      - torchvision==0.14.0.dev20221001
+      - torchaudio==0.13.0.dev20221001
