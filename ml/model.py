@@ -11,8 +11,18 @@ from ml.dataset import dataset_collate_function
 
 
 class CNN(LightningModule):
-    def __init__(self, c1_output_dim, c1_kernel_size, c1_stride, c2_output_dim, c2_kernel_size, c2_stride,
-                 output_dim, data_path, signal_length):
+    def __init__(
+        self,
+        c1_output_dim,
+        c1_kernel_size,
+        c1_stride,
+        c2_output_dim,
+        c2_kernel_size,
+        c2_stride,
+        output_dim,
+        data_path,
+        signal_length,
+    ):
         super().__init__()
         # save parameters to checkpoint
         self.save_hyperparameters()
@@ -23,23 +33,21 @@ class CNN(LightningModule):
                 in_channels=1,
                 out_channels=self.hparams.c1_output_dim,
                 kernel_size=self.hparams.c1_kernel_size,
-                stride=self.hparams.c1_stride
+                stride=self.hparams.c1_stride,
             ),
-            nn.ReLU()
+            nn.ReLU(),
         )
         self.conv2 = nn.Sequential(
             nn.Conv1d(
                 in_channels=self.hparams.c1_output_dim,
                 out_channels=self.hparams.c2_output_dim,
                 kernel_size=self.hparams.c2_kernel_size,
-                stride=self.hparams.c2_stride
+                stride=self.hparams.c2_stride,
             ),
-            nn.ReLU()
+            nn.ReLU(),
         )
 
-        self.max_pool = nn.MaxPool1d(
-            kernel_size=2
-        )
+        self.max_pool = nn.MaxPool1d(kernel_size=2)
 
         # flatten, calculate the output size of max pool
         # use a dummy input to calculate
@@ -51,35 +59,19 @@ class CNN(LightningModule):
 
         # followed by 5 dense layers
         self.fc1 = nn.Sequential(
-            nn.Linear(
-                in_features=max_pool_out,
-                out_features=200
-            ),
+            nn.Linear(in_features=max_pool_out, out_features=200),
             nn.Dropout(p=0.05),
-            nn.ReLU()
+            nn.ReLU(),
         )
         self.fc2 = nn.Sequential(
-            nn.Linear(
-                in_features=200,
-                out_features=100
-            ),
-            nn.Dropout(p=0.05),
-            nn.ReLU()
+            nn.Linear(in_features=200, out_features=100), nn.Dropout(p=0.05), nn.ReLU()
         )
         self.fc3 = nn.Sequential(
-            nn.Linear(
-                in_features=100,
-                out_features=50
-            ),
-            nn.Dropout(p=0.05),
-            nn.ReLU()
+            nn.Linear(in_features=100, out_features=50), nn.Dropout(p=0.05), nn.ReLU()
         )
 
         # finally, output layer
-        self.out = nn.Linear(
-            in_features=50,
-            out_features=self.hparams.output_dim
-        )
+        self.out = nn.Linear(in_features=50, out_features=self.hparams.output_dim)
 
     def forward(self, x):
         # make sure the input is in [batch_size, channel, signal_length]
@@ -112,8 +104,13 @@ class CNN(LightningModule):
             num_workers = multiprocessing.cpu_count()
         except:
             num_workers = 1
-        dataloader = DataLoader(dataset, batch_size=16, num_workers=num_workers, collate_fn=dataset_collate_function,
-                                shuffle=True)
+        dataloader = DataLoader(
+            dataset,
+            batch_size=16,
+            num_workers=num_workers,
+            collate_fn=dataset_collate_function,
+            shuffle=True,
+        )
 
         return dataloader
 
@@ -121,13 +118,20 @@ class CNN(LightningModule):
         return torch.optim.Adam(self.parameters())
 
     def training_step(self, batch, batch_idx):
-        x = batch['feature'].float()
-        y = batch['label'].long()
+        x = batch["feature"].float()
+        y = batch["label"].long()
         y_hat = self(x)
 
         entropy = F.cross_entropy(y_hat, y)
-        self.log('training_loss', entropy, prog_bar=True, logger=True, on_step=True, on_epoch=True)
-        loss = {'loss': entropy}
+        self.log(
+            "training_loss",
+            entropy,
+            prog_bar=True,
+            logger=True,
+            on_step=True,
+            on_epoch=True,
+        )
+        loss = {"loss": entropy}
 
         return loss
 
@@ -149,7 +153,8 @@ class CustomConv1d(nn.Module):
             out_channels=self.out_channels,
             kernel_size=self.kernel_size,
             stride=self.stride,
-            groups=self.groups)
+            groups=self.groups,
+        )
 
     def forward(self, x):
         net = x
@@ -199,8 +204,18 @@ class BasicBlock(nn.Module):
     ResNet Basic Block
     """
 
-    def __init__(self, in_channels, out_channels, kernel_size, stride, groups, downsample, use_bn, use_do,
-                 is_first_block=False):
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel_size,
+        stride,
+        groups,
+        downsample,
+        use_bn,
+        use_do,
+        is_first_block=False,
+    ):
         super(BasicBlock, self).__init__()
 
         self.in_channels = in_channels
@@ -226,7 +241,8 @@ class BasicBlock(nn.Module):
             out_channels=out_channels,
             kernel_size=kernel_size,
             stride=self.stride,
-            groups=self.groups)
+            groups=self.groups,
+        )
 
         # the second conv
         self.bn2 = nn.BatchNorm1d(out_channels)
@@ -237,7 +253,8 @@ class BasicBlock(nn.Module):
             out_channels=out_channels,
             kernel_size=kernel_size,
             stride=1,
-            groups=self.groups)
+            groups=self.groups,
+        )
 
         self.max_pool = CustomMaxPool1d(kernel_size=self.stride)
 
@@ -302,8 +319,21 @@ class ResNet1d(nn.Module):
 
     """
 
-    def __init__(self, in_channels, base_filters, kernel_size, stride, groups, n_block, n_classes, downsample_gap=2,
-                 increasefilter_gap=4, use_bn=True, use_do=True, verbose=False):
+    def __init__(
+        self,
+        in_channels,
+        base_filters,
+        kernel_size,
+        stride,
+        groups,
+        n_block,
+        n_classes,
+        downsample_gap=2,
+        increasefilter_gap=4,
+        use_bn=True,
+        use_do=True,
+        verbose=False,
+    ):
         super(ResNet1d, self).__init__()
 
         self.verbose = verbose
@@ -318,7 +348,12 @@ class ResNet1d(nn.Module):
         self.increasefilter_gap = increasefilter_gap  # 4 for base model
 
         # first block
-        self.first_block_conv = CustomConv1d(in_channels=in_channels, out_channels=base_filters, kernel_size=self.kernel_size, stride=1)
+        self.first_block_conv = CustomConv1d(
+            in_channels=in_channels,
+            out_channels=base_filters,
+            kernel_size=self.kernel_size,
+            stride=1,
+        )
         self.first_block_bn = nn.BatchNorm1d(base_filters)
         self.first_block_relu = nn.ReLU()
         out_channels = base_filters
@@ -342,7 +377,9 @@ class ResNet1d(nn.Module):
                 out_channels = in_channels
             else:
                 # increase filters at every self.increasefilter_gap blocks
-                in_channels = int(base_filters * 2 ** ((i_block - 1) // self.increasefilter_gap))
+                in_channels = int(
+                    base_filters * 2 ** ((i_block - 1) // self.increasefilter_gap)
+                )
                 if (i_block % self.increasefilter_gap == 0) and (i_block != 0):
                     out_channels = in_channels * 2
                 else:
@@ -357,7 +394,8 @@ class ResNet1d(nn.Module):
                 downsample=downsample,
                 use_bn=self.use_bn,
                 use_do=self.use_do,
-                is_first_block=is_first_block)
+                is_first_block=is_first_block,
+            )
             self.basicblock_list.append(tmp_block)
 
         # final prediction
@@ -373,10 +411,10 @@ class ResNet1d(nn.Module):
 
         # first conv
         if self.verbose:
-            print('input shape', out.shape)
+            print("input shape", out.shape)
         out = self.first_block_conv(out)
         if self.verbose:
-            print('after first conv', out.shape)
+            print("after first conv", out.shape)
         if self.use_bn:
             out = self.first_block_bn(out)
         out = self.first_block_relu(out)
@@ -385,7 +423,11 @@ class ResNet1d(nn.Module):
         for i_block in range(self.n_block):
             net = self.basicblock_list[i_block]
             if self.verbose:
-                print('i_block: {0}, in_channels: {1}, out_channels: {2}, downsample: {3}'.format(i_block, net.in_channels, net.out_channels, net.downsample))
+                print(
+                    "i_block: {0}, in_channels: {1}, out_channels: {2}, downsample: {3}".format(
+                        i_block, net.in_channels, net.out_channels, net.downsample
+                    )
+                )
             out = net(out)
             if self.verbose:
                 print(out.shape)
@@ -396,20 +438,30 @@ class ResNet1d(nn.Module):
         out = self.final_relu(out)
         out = out.mean(-1)
         if self.verbose:
-            print('final pooling', out.shape)
+            print("final pooling", out.shape)
         # out = self.do(out)
         out = self.dense(out)
         if self.verbose:
-            print('dense', out.shape)
+            print("dense", out.shape)
         # out = self.softmax(out)
         if self.verbose:
-            print('softmax', out.shape)
+            print("softmax", out.shape)
 
         return out
 
 
 class ResNet(LightningModule):
-    def __init__(self, c1_output_dim, c1_kernel_size, c1_stride, c1_groups, c1_n_block, output_dim, data_path, signal_length):
+    def __init__(
+        self,
+        c1_output_dim,
+        c1_kernel_size,
+        c1_stride,
+        c1_groups,
+        c1_n_block,
+        output_dim,
+        data_path,
+        signal_length,
+    ):
         super().__init__()
         # save parameters to checkpoint
         self.save_hyperparameters()
@@ -423,14 +475,12 @@ class ResNet(LightningModule):
                 stride=self.hparams.c1_stride,
                 groups=self.hparams.c1_groups,
                 n_block=self.hparams.c1_n_block,
-                n_classes=self.hparams.c1_output_dim
+                n_classes=self.hparams.c1_output_dim,
             ),
-            nn.ReLU()
+            nn.ReLU(),
         )
 
-        self.max_pool = nn.MaxPool1d(
-            kernel_size=2
-        )
+        self.max_pool = nn.MaxPool1d(kernel_size=2)
 
         # flatten, calculate the output size of max pool
         # use a dummy input to calculate
@@ -441,35 +491,19 @@ class ResNet(LightningModule):
 
         # followed by 5 dense layers
         self.fc1 = nn.Sequential(
-            nn.Linear(
-                in_features=max_pool_out,
-                out_features=200
-            ),
+            nn.Linear(in_features=max_pool_out, out_features=200),
             nn.Dropout(p=0.05),
-            nn.ReLU()
+            nn.ReLU(),
         )
         self.fc2 = nn.Sequential(
-            nn.Linear(
-                in_features=200,
-                out_features=100
-            ),
-            nn.Dropout(p=0.05),
-            nn.ReLU()
+            nn.Linear(in_features=200, out_features=100), nn.Dropout(p=0.05), nn.ReLU()
         )
         self.fc3 = nn.Sequential(
-            nn.Linear(
-                in_features=100,
-                out_features=50
-            ),
-            nn.Dropout(p=0.05),
-            nn.ReLU()
+            nn.Linear(in_features=100, out_features=50), nn.Dropout(p=0.05), nn.ReLU()
         )
 
         # finally, output layer
-        self.out = nn.Linear(
-            in_features=50,
-            out_features=self.hparams.output_dim
-        )
+        self.out = nn.Linear(in_features=50, out_features=self.hparams.output_dim)
 
     def forward(self, x):
         # make sure the input is in [batch_size, channel, signal_length]
@@ -501,8 +535,13 @@ class ResNet(LightningModule):
             num_workers = multiprocessing.cpu_count()
         except:
             num_workers = 1
-        dataloader = DataLoader(dataset, batch_size=16, num_workers=num_workers, collate_fn=dataset_collate_function,
-                                shuffle=True)
+        dataloader = DataLoader(
+            dataset,
+            batch_size=16,
+            num_workers=num_workers,
+            collate_fn=dataset_collate_function,
+            shuffle=True,
+        )
 
         return dataloader
 
@@ -510,12 +549,19 @@ class ResNet(LightningModule):
         return torch.optim.Adam(self.parameters())
 
     def training_step(self, batch, batch_idx):
-        x = batch['feature'].float()
-        y = batch['label'].long()
+        x = batch["feature"].float()
+        y = batch["label"].long()
         y_hat = self(x)
 
         entropy = F.cross_entropy(y_hat, y)
-        self.log('training_loss', entropy, prog_bar=True, logger=True, on_step=True, on_epoch=True)
-        loss = {'loss': entropy}
+        self.log(
+            "training_loss",
+            entropy,
+            prog_bar=True,
+            logger=True,
+            on_step=True,
+            on_epoch=True,
+        )
+        loss = {"loss": entropy}
 
         return loss
