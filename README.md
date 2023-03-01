@@ -6,7 +6,7 @@ post: https://blog.munhou.com/2020/04/05/Pytorch-Implementation-of-Deep-Packet-A
 ## Changelog
 ### EDIT: 2022-11-30
 
-* Add the ResNet model. Kudos to [Taehyun](https://github.com/thkim0022) for implementing ResNet. 
+* Add the ResNet model. Kudos to [Taehyun](https://github.com/k1m743hyun) for implementing ResNet. 
 
 ### EDIT: 2022-09-27
 
